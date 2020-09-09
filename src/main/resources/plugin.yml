@@ -1,0 +1,7 @@
+name: Cite-econ
+author: MileKat
+main: fr.milekat.cite_econ.MainEcon
+version: '1.0'
+api-version: '1.16'
+description: plugin cite au émeraudes par MileKat - Gestion de l'économie
+depend: [Cite-libs, Cite-core, Cite-claim, Citizens, LuckPerms]
