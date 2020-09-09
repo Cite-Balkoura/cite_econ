@@ -6,6 +6,9 @@ import fr.milekat.cite_core.core.obj.Team;
 import fr.milekat.cite_econ.MainEcon;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.util.NMS;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.cacheddata.CachedMetaData;
@@ -79,7 +82,7 @@ public class Updater {
                 }
                 MainEcon.nextUpdate = DateUtils.addMinutes(new Date(), 5);
             }
-        }.runTaskTimer(MainEcon.getInstance(),200L,6000L);
+        }.runTaskTimer(MainEcon.getInstance(),500L,6000L);
     }
 
     private Profil getRandomIntFromList(ArrayList<Profil> list) {
@@ -92,7 +95,8 @@ public class Updater {
         for (int rank = 1; rank<=3; rank++) {
             NPC npc = CitizensAPI.getNPCRegistry().getById(firstNPCid + (rank-1));
             if (classement.getOrDefault(rank,null)==null) {
-                npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, "MileKat");
+                npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA, "ewogICJ0aW1lc3RhbXAiIDogMTU5OTY3OTUwODk2NSwKICAicHJvZmlsZUlkIiA6ICI1MDQyOWM5YzY2MjY0OTZlOWFmMDA5NzMxMTJhZWNiMiIsCiAgInByb2ZpbGVOYW1lIiA6ICJNaWxlS2F0IiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2M1NDA1MzM4Mjk2MzNjNDYwYjcwNzk1YThiYmNhZDIwNDdjOGI0Y2UzZjQ4NWFhYjNjNjJjZTk4Y2U5YTJjM2MiCiAgICB9CiAgfQp9");
+                npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA, "yS7kxlPY/a88v7Bo13MisLsYhuYuCtqqIKHpSzYCFX2AKKG+BFVqD2gjJLU3laehY2357o4LH2JNRQRPViLLOSBzxd2kiKacttHjkOUwSJWlVMfAYFnVEQrvpXiuy+nWsqIitdUK5VdnavkJm33yJVNXPcL35rALFO5w4OsmlJdSo6VJwdcSt6yt7Btlm/lif6lz5shnBtRESU3tMw9U48yzUrH3bq0j4q71Dyq6WCNPTknJ2UtVjDNISJhWeCYeWtvw/LxnBcBM/mkY3bVRtEsBahWoVl8clcm4LTkBh8kbvY2lCTxb3wP1T8BX23/+yKuvlaRm4mvjOALsPabcivoU7OdMwC4P495mzrpoccKsacMIdm8jN569R59rCKzBZf5aPDZj6NGmKQlYkGACyos7S2BEtSBTCRpTdMNv/PcyDLH9TvAdzZlNYAhmuks1/Ua2KI+nX6EFyAJ4IfRvjJmcrR2/PR6fghbwMsrUYNISkYAkiV6wCiLJWWk2xjTjo0tfMr4pTVpyJGPhxHM9VYjKSeVliSMtO2R5QdzWzX4C/NAts7LpIjBwCwm1rxG2xz7a5BsDL/cHCwLZBAqI3di+4PlqyQIr1ezlxBhIhgcX8i4ow7vTeozMLyrmTJRs86fP3lvtq7NPgsUtitW4z9+CkcGwI7axbXfVgJuH6Wg=");
                 updateSign(firstNPCid + (rank-1), null, rank);
             } else {
                 Team team = classement.getOrDefault(rank,null);
@@ -100,7 +104,8 @@ public class Updater {
                 try {
                     npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, profil.getName());
                 } catch (NullPointerException ignore) {
-                    npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, "MileKat");
+                    npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA, "ewogICJ0aW1lc3RhbXAiIDogMTU5OTY3OTUwODk2NSwKICAicHJvZmlsZUlkIiA6ICI1MDQyOWM5YzY2MjY0OTZlOWFmMDA5NzMxMTJhZWNiMiIsCiAgInByb2ZpbGVOYW1lIiA6ICJNaWxlS2F0IiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2M1NDA1MzM4Mjk2MzNjNDYwYjcwNzk1YThiYmNhZDIwNDdjOGI0Y2UzZjQ4NWFhYjNjNjJjZTk4Y2U5YTJjM2MiCiAgICB9CiAgfQp9");
+                    npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA, "yS7kxlPY/a88v7Bo13MisLsYhuYuCtqqIKHpSzYCFX2AKKG+BFVqD2gjJLU3laehY2357o4LH2JNRQRPViLLOSBzxd2kiKacttHjkOUwSJWlVMfAYFnVEQrvpXiuy+nWsqIitdUK5VdnavkJm33yJVNXPcL35rALFO5w4OsmlJdSo6VJwdcSt6yt7Btlm/lif6lz5shnBtRESU3tMw9U48yzUrH3bq0j4q71Dyq6WCNPTknJ2UtVjDNISJhWeCYeWtvw/LxnBcBM/mkY3bVRtEsBahWoVl8clcm4LTkBh8kbvY2lCTxb3wP1T8BX23/+yKuvlaRm4mvjOALsPabcivoU7OdMwC4P495mzrpoccKsacMIdm8jN569R59rCKzBZf5aPDZj6NGmKQlYkGACyos7S2BEtSBTCRpTdMNv/PcyDLH9TvAdzZlNYAhmuks1/Ua2KI+nX6EFyAJ4IfRvjJmcrR2/PR6fghbwMsrUYNISkYAkiV6wCiLJWWk2xjTjo0tfMr4pTVpyJGPhxHM9VYjKSeVliSMtO2R5QdzWzX4C/NAts7LpIjBwCwm1rxG2xz7a5BsDL/cHCwLZBAqI3di+4PlqyQIr1ezlxBhIhgcX8i4ow7vTeozMLyrmTJRs86fP3lvtq7NPgsUtitW4z9+CkcGwI7axbXfVgJuH6Wg=");
                 }
                 updateSign(firstNPCid + (rank-1), team, rank);
             }
@@ -112,7 +117,6 @@ public class Updater {
         if (team==null) {
             sign.setLine(1,"");
             sign.setLine(2,"");
-            sign.update();
         } else {
             String display = "";
             switch (rank) {
@@ -134,8 +138,8 @@ public class Updater {
             }
             sign.setLine(1,display + "§f" + team.getName());
             sign.setLine(2,"§2Ém§c: §f" + team.getMoney());
-            sign.update();
         }
+        sign.update();
     }
 
     /**
