@@ -5,3 +5,9 @@ version: '1.0'
 api-version: '1.16'
 description: plugin cite au émeraudes par MileKat - Gestion de l'économie
 depend: [Cite-libs, Cite-core, Cite-claim, Citizens, LuckPerms]
+commands:
+  money:
+    usage: "/money"
+    description: "Consulter le nombre d'émeraude de votre équipe"
+    aliases:
+      - bal
