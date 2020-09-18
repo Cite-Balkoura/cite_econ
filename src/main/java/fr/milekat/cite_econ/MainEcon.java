@@ -1,6 +1,7 @@
 package fr.milekat.cite_econ;
 
 import fr.milekat.cite_econ.commands.Money;
+import fr.milekat.cite_econ.commands.MoneyTab;
 import fr.milekat.cite_econ.egine.Updater;
 import fr.milekat.cite_econ.event.EconEvents;
 import fr.mrmicky.fastinv.FastInvManager;
@@ -30,6 +31,8 @@ public class MainEcon extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EconEvents(),this);
         // Commandes
         getCommand("money").setExecutor(new Money());
+        //  Tab
+        getCommand("money").setTabCompleter(new MoneyTab());
         updater = new Updater().runTask();
     }
 

@@ -16,6 +16,7 @@ import net.luckperms.api.model.user.User;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.time.DateUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -79,10 +80,12 @@ public class Updater {
                     updateBook("Solo", classement);
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
+                } catch (NullPointerException ignore) {
+                    Bukkit.getLogger().warning("[MainEcon] update des scores skip, erreur inconnue.");
                 }
                 MainEcon.nextUpdate = DateUtils.addMinutes(new Date(), 5);
             }
-        }.runTaskTimer(MainEcon.getInstance(),500L,6000L);
+        }.runTaskTimer(MainEcon.getInstance(),0L,6000L);
     }
 
     private Profil getRandomIntFromList(ArrayList<Profil> list) {
@@ -170,8 +173,8 @@ public class Updater {
             Collection<BaseComponent> membres = new ArrayList<>();
             for (Profil profil : team.getValue().getMembers()) {
                 try {
-                    String prefix = "";
                     try {
+                        String prefix = "";
                         User user = api.getUserManager().loadUser(profil.getUuid()).get();
                         if (user!=null) {
                             CachedMetaData cachedMetaData = user.getCachedData().getMetaData();
@@ -179,8 +182,8 @@ public class Updater {
                                 prefix = getRank(cachedMetaData.getPrimaryGroup());
                             }
                         }
+                        membres.add(BookUtil.TextBuilder.of("\n §3- §r" + prefix + profil.getName()).build());
                     } catch (NullPointerException ignore) {}
-                    membres.add(BookUtil.TextBuilder.of("\n §3- §r" + prefix + profil.getName()).build());
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }

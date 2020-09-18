@@ -1,7 +1,9 @@
 package fr.milekat.cite_econ.utils;
 
 import fr.milekat.cite_core.MainCore;
+import fr.milekat.cite_core.core.obj.Profil;
 import fr.milekat.cite_core.core.obj.Team;
+import fr.milekat.cite_libs.utils_tools.DateMilekat;
 import fr.mrmicky.fastinv.FastInv;
 import fr.mrmicky.fastinv.ItemBuilder;
 import net.md_5.bungee.api.ChatColor;
@@ -151,12 +153,18 @@ public class GuichetGUI extends FastInv {
         Team team = MainCore.teamHashMap.get(MainCore.profilHashMap.get(player.getUniqueId()).getTeam());
         Connection connection = MainCore.getSQL().getConnection();
         try {
-            PreparedStatement q = connection.prepareStatement("SELECT `money` FROM `balkoura_team` WHERE `team_id` = ?;" +
-                    "UPDATE `balkoura_team` SET `money` = `money` + ? WHERE `team_id` = ?;");
+            PreparedStatement q = connection.prepareStatement(
+                    "SELECT `money` FROM `" + MainCore.SQLPREFIX + "team` WHERE `team_id` = ?;" +
+                    "UPDATE `" + MainCore.SQLPREFIX + "team` SET `money` = `money` + ? WHERE `team_id` = ?;" +
+                    "INSERT INTO `" + MainCore.SQLPREFIX + "transactions`(`player_id`, `amount`, `date`) VALUES " +
+                    "((SELECT `player_id` FROM `" + MainCore.SQLPREFIX + "player` WHERE `uuid` = '" +
+                    player.getUniqueId().toString() + "'),?,?);");
             if (material.equals(Material.EMERALD_BLOCK)) amount = amount * 9;
             q.setInt(1, team.getId());
             q.setInt(2, amount);
             q.setInt(3, team.getId());
+            q.setInt(4, amount);
+            q.setString(5, DateMilekat.setDateNow());
             q.execute();
             q.getResultSet().last();
             team.setMoney(q.getResultSet().getInt("money") + amount);
