@@ -128,25 +128,8 @@ public class ClassementsUpdate {
             sign.setLine(1,"");
             sign.setLine(2,"");
         } else {
-            String display = "";
-            switch (rank) {
-                case 1:
-                {
-                    display = "§61er§c: ";
-                    break;
-                }
-                case 2:
-                {
-                    display = "§62ème§c: ";
-                    break;
-                }
-                case 3:
-                {
-                    display = "§63ème§c: ";
-                    break;
-                }
-            }
-            sign.setLine(1,display + "§f" + team.getName());
+            String[] teamName = team.getName().split("(?<=\\G.{11}.)");
+            sign.setLine(1,/*display + */"§6" + rank + ".§c:§f" + teamName[0]);
             sign.setLine(2,"§2Ém§c: §f" + team.getMoney());
         }
         sign.update();
@@ -193,11 +176,12 @@ public class ClassementsUpdate {
                     e.printStackTrace();
                 }
             }
+            String[] teamName = team.getValue().getName().split("(?<=\\G.{13}.)");
             pages.add(new BookUtil.PageBuilder()
                     .newLine()
                     .add(new TextComponent("  §7§m----§7[ §6Top §c" + team.getKey() +" §7]§7§m----"))
                     .newLine().newLine().newLine()
-                    .add(BookUtil.TextBuilder.of("§8Équipe§c: §3" + team.getValue().getName()).build())
+                    .add(BookUtil.TextBuilder.of("§8Nom§c: §3" + teamName[0]).build())
                     .newLine()
                     .add(BookUtil.TextBuilder.of("§8Émeraudes§c: §2" + team.getValue().getMoney()).build())
                     .newLine().newLine()
