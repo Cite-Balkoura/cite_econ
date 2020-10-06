@@ -2,7 +2,7 @@ package fr.milekat.cite_econ;
 
 import fr.milekat.cite_econ.commands.Money;
 import fr.milekat.cite_econ.commands.MoneyTab;
-import fr.milekat.cite_econ.egine.Updater;
+import fr.milekat.cite_econ.egine.ClassementsUpdate;
 import fr.milekat.cite_econ.event.EconEvents;
 import fr.mrmicky.fastinv.FastInvManager;
 import org.bukkit.Bukkit;
@@ -33,7 +33,8 @@ public class MainEcon extends JavaPlugin {
         getCommand("money").setExecutor(new Money());
         //  Tab
         getCommand("money").setTabCompleter(new MoneyTab());
-        updater = new Updater().runTask();
+        // Engine
+        updater = new ClassementsUpdate().runTask();
     }
 
     @Override

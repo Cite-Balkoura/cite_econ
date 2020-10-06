@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.io.FileNotFoundException;
 import java.util.UUID;
 
 public class Money implements CommandExecutor {
@@ -22,14 +23,17 @@ public class Money implements CommandExecutor {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    String target = MojangNames.getUuid(args[0]);
-                    if(target.equalsIgnoreCase("invalid name"))
-
-                    {
+                    String target;
+                    try {
+                        target = MojangNames.getUuid(args[0]);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        sender.sendMessage(MainCore.prefixCmd + "§cServeur mojang en erreur.");
+                        return;
+                    }
+                    if(target.equalsIgnoreCase("invalid name")) {
                         sender.sendMessage(MainCore.prefixCmd + "§cJoueur introuvable.");
-                    } else
-
-                    {
+                    } else {
                         Team team = MainCore.teamHashMap.get(MainCore.profilHashMap.get(UUID.fromString(target)).getTeam());
                         if (team == null) {
                             sender.sendMessage(MainCore.prefixCmd + "§cJoueur introuvable.");

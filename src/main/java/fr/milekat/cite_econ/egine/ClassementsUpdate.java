@@ -16,6 +16,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import xyz.upperlevel.spigot.book.BookUtil;
@@ -26,9 +27,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
-import static org.bukkit.inventory.meta.BookMeta.Generation.TATTERED;
-
-public class Updater {
+public class ClassementsUpdate {
     public BukkitTask runTask() {
         return new BukkitRunnable() {
             @Override
@@ -40,41 +39,47 @@ public class Updater {
                             "LEFT JOIN `balkoura_player` b ON b.`team_id` = a.`team_id` " +
                             "GROUP BY `team_name` HAVING COUNT(b.`name`) > 3 ORDER BY `money` DESC;");
                     q.execute();
-                    HashMap<Integer, Team> classement = new HashMap<>();
+                    HashMap<Integer, Team> classementTeam = new HashMap<>();
                     while (q.getResultSet().next()) {
-                        classement.put(q.getResultSet().getRow(), MainCore.teamHashMap.getOrDefault
+                        classementTeam.put(q.getResultSet().getRow(), MainCore.teamHashMap.getOrDefault
                                 (q.getResultSet().getInt("team_id"),null));
                     }
                     q.close();
-                    updateSkins(classement, 5);
-                    updateBook("Équipes", classement);
+                    Bukkit.getScheduler().runTask(MainEcon.getInstance(), ()->{
+                        updateSkins(classementTeam, 5);
+                        updateBook("Équipes", classementTeam);
+                    });
                     q = connection.prepareStatement("SELECT a.`team_id` as duo_id, " +
                             "`team_name` as duo_name, `money` as duo_money FROM `balkoura_team` a " +
                             "LEFT JOIN `balkoura_player` b ON b.`team_id` = a.`team_id` " +
                             "GROUP BY `team_name` HAVING COUNT(b.`name`) = 2 OR COUNT(b.`name`) = 3 " +
                             "ORDER BY `money` DESC;");
                     q.execute();
-                    classement = new HashMap<>();
+                    HashMap<Integer, Team> classementDuo = new HashMap<>();
                     while (q.getResultSet().next()) {
-                        classement.put(q.getResultSet().getRow(), MainCore.teamHashMap.getOrDefault
+                        classementDuo.put(q.getResultSet().getRow(), MainCore.teamHashMap.getOrDefault
                                 (q.getResultSet().getInt("duo_id"),null));
                     }
                     q.close();
-                    updateSkins(classement, 8);
-                    updateBook("Duo/Trio", classement);
+                    Bukkit.getScheduler().runTask(MainEcon.getInstance(), ()-> {
+                                updateSkins(classementDuo, 8);
+                                updateBook("Duo/Trio", classementDuo);
+                    });
                     q = connection.prepareStatement("SELECT a.`team_id` as solo_id, " +
                             "`team_name` as solo_name, `money` as solo_money FROM `balkoura_team` a " +
                             "LEFT JOIN `balkoura_player` b ON b.`team_id` = a.`team_id` " +
                             "GROUP BY `team_name` HAVING COUNT(b.`name`) = 1 ORDER BY `money` DESC;");
                     q.execute();
-                    classement = new HashMap<>();
+                    HashMap<Integer, Team> classementSolo = new HashMap<>();
                     while (q.getResultSet().next()) {
-                        classement.put(q.getResultSet().getRow(), MainCore.teamHashMap.getOrDefault
+                        classementSolo.put(q.getResultSet().getRow(), MainCore.teamHashMap.getOrDefault
                                 (q.getResultSet().getInt("solo_id"),null));
                     }
                     q.close();
-                    updateSkins(classement, 11);
-                    updateBook("Solo", classement);
+                    Bukkit.getScheduler().runTask(MainEcon.getInstance(), ()-> {
+                        updateSkins(classementSolo, 11);
+                        updateBook("Solo", classementSolo);
+                    });
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 } catch (NullPointerException ignore) {
@@ -82,12 +87,7 @@ public class Updater {
                 }
                 MainEcon.nextUpdate = DateUtils.addMinutes(new Date(), 5);
             }
-        }.runTaskTimer(MainEcon.getInstance(),0L,6000L);
-    }
-
-    private Profil getRandomIntFromList(ArrayList<Profil> list) {
-        Random rand = new Random();
-        return list.get(rand.nextInt(list.size()));
+        }.runTaskTimerAsynchronously(MainEcon.getInstance(),0L,6000L);
     }
 
     @SuppressWarnings("deprecation")
@@ -100,9 +100,8 @@ public class Updater {
                 updateSign(firstNPCid + (rank-1), null, rank);
             } else {
                 Team team = classement.getOrDefault(rank,null);
-                Profil profil = getRandomIntFromList(team.getMembers());
                 try {
-                    npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, profil.getName());
+                    npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, getRandomIntFromList(team.getMembers()).getName());
                 } catch (NullPointerException ignore) {
                     npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA, "ewogICJ0aW1lc3RhbXAiIDogMTU5OTY3OTUwODk2NSwKICAicHJvZmlsZUlkIiA6ICI1MDQyOWM5YzY2MjY0OTZlOWFmMDA5NzMxMTJhZWNiMiIsCiAgInByb2ZpbGVOYW1lIiA6ICJNaWxlS2F0IiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2M1NDA1MzM4Mjk2MzNjNDYwYjcwNzk1YThiYmNhZDIwNDdjOGI0Y2UzZjQ4NWFhYjNjNjJjZTk4Y2U5YTJjM2MiCiAgICB9CiAgfQp9");
                     npc.data().setPersistent(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA, "yS7kxlPY/a88v7Bo13MisLsYhuYuCtqqIKHpSzYCFX2AKKG+BFVqD2gjJLU3laehY2357o4LH2JNRQRPViLLOSBzxd2kiKacttHjkOUwSJWlVMfAYFnVEQrvpXiuy+nWsqIitdUK5VdnavkJm33yJVNXPcL35rALFO5w4OsmlJdSo6VJwdcSt6yt7Btlm/lif6lz5shnBtRESU3tMw9U48yzUrH3bq0j4q71Dyq6WCNPTknJ2UtVjDNISJhWeCYeWtvw/LxnBcBM/mkY3bVRtEsBahWoVl8clcm4LTkBh8kbvY2lCTxb3wP1T8BX23/+yKuvlaRm4mvjOALsPabcivoU7OdMwC4P495mzrpoccKsacMIdm8jN569R59rCKzBZf5aPDZj6NGmKQlYkGACyos7S2BEtSBTCRpTdMNv/PcyDLH9TvAdzZlNYAhmuks1/Ua2KI+nX6EFyAJ4IfRvjJmcrR2/PR6fghbwMsrUYNISkYAkiV6wCiLJWWk2xjTjo0tfMr4pTVpyJGPhxHM9VYjKSeVliSMtO2R5QdzWzX4C/NAts7LpIjBwCwm1rxG2xz7a5BsDL/cHCwLZBAqI3di+4PlqyQIr1ezlxBhIhgcX8i4ow7vTeozMLyrmTJRs86fP3lvtq7NPgsUtitW4z9+CkcGwI7axbXfVgJuH6Wg=");
@@ -112,6 +111,17 @@ public class Updater {
         }
     }
 
+    /**
+     *      Récupère un profil au hasard dans la liste des membres
+     */
+    private Profil getRandomIntFromList(ArrayList<Profil> list) {
+        Random rand = new Random();
+        return list.get(rand.nextInt(list.size()));
+    }
+
+    /**
+     *      Mise à jour des panneaux
+     */
     private void updateSign(int signnb, Team team, int rank) {
         Sign sign = (Sign) MainEcon.scoresSigns.get(signnb).getBlock().getState();
         if (team==null) {
@@ -170,17 +180,15 @@ public class Updater {
             Collection<BaseComponent> membres = new ArrayList<>();
             for (Profil profil : team.getValue().getMembers()) {
                 try {
-                    try {
-                        String prefix = "";
-                        User user = api.getUserManager().loadUser(profil.getUuid()).get();
-                        if (user!=null) {
-                            CachedMetaData cachedMetaData = user.getCachedData().getMetaData();
-                            if (cachedMetaData.getPrimaryGroup()!=null) {
-                                prefix = getRank(cachedMetaData.getPrimaryGroup());
-                            }
+                    String prefix = "";
+                    User user = api.getUserManager().loadUser(profil.getUuid()).get();
+                    if (user!=null) {
+                        CachedMetaData cachedMetaData = user.getCachedData().getMetaData();
+                        if (cachedMetaData.getPrimaryGroup()!=null) {
+                            prefix = getRank(cachedMetaData.getPrimaryGroup());
                         }
-                        membres.add(BookUtil.TextBuilder.of("\n §3- §r" + prefix + profil.getName()).build());
-                    } catch (NullPointerException ignore) {}
+                    }
+                    membres.add(BookUtil.TextBuilder.of("\n§3-§r" + prefix + profil.getName()).build());
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
@@ -200,7 +208,7 @@ public class Updater {
         }
         MainEcon.books.put(type, BookUtil.writtenBook()
                 .author("MileKat")
-                .generation(TATTERED)
+                .generation(BookMeta.Generation.TATTERED)
                 .title("Classements des " + type)
                 .pages(pages)
                 .build()
