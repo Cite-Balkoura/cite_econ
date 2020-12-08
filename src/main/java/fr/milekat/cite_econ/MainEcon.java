@@ -4,7 +4,6 @@ import fr.milekat.cite_econ.commands.Money;
 import fr.milekat.cite_econ.commands.MoneyTab;
 import fr.milekat.cite_econ.egine.ClassementsUpdate;
 import fr.milekat.cite_econ.event.EconEvents;
-import fr.mrmicky.fastinv.FastInvManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -25,7 +24,6 @@ public class MainEcon extends JavaPlugin {
     @Override
     public void onEnable() {
         mainEcon = this;
-        FastInvManager.register(this);
         setSignsPos();
         setLecternsPos();
         getServer().getPluginManager().registerEvents(new EconEvents(),this);

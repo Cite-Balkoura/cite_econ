@@ -141,6 +141,7 @@ public class ClassementsUpdate {
     private void updateBook(String type, HashMap<Integer, Team> classement) {
         ArrayList<BaseComponent[]> pages = new ArrayList<>();
         LuckPerms api = LuckPermsProvider.get();
+        // Page 1
         Collection<BaseComponent> title = new ArrayList<>();
         if (type.equalsIgnoreCase("équipes")) {
             title.add(BookUtil.TextBuilder.of("       Des Équipes").style().color(ChatColor.DARK_GREEN).build());
@@ -159,6 +160,7 @@ public class ClassementsUpdate {
                 .newLine().newLine().newLine().newLine().newLine().newLine().newLine()
                 .add(BookUtil.TextBuilder.of("      §2§k~§r§3Par MileKat§2§k~").style().build())
                 .build());
+        // Pages des équipes
         for (Map.Entry<Integer, Team> team : classement.entrySet()) {
             Collection<BaseComponent> membres = new ArrayList<>();
             for (Profil profil : team.getValue().getMembers()) {
@@ -190,6 +192,7 @@ public class ClassementsUpdate {
                     .build()
             );
         }
+        // Création du livre
         MainEcon.books.put(type, BookUtil.writtenBook()
                 .author("MileKat")
                 .generation(BookMeta.Generation.TATTERED)

@@ -1,7 +1,6 @@
 package fr.milekat.cite_econ.utils;
 
 import fr.milekat.cite_core.MainCore;
-import fr.milekat.cite_core.core.obj.Profil;
 import fr.milekat.cite_core.core.obj.Team;
 import fr.milekat.cite_libs.utils_tools.DateMilekat;
 import fr.mrmicky.fastinv.FastInv;
